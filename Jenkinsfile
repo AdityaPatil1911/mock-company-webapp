@@ -1,62 +1,58 @@
 pipeline {
     agent any
+
     tools {
-        git 'Default' // Ensure Git is configured
+        // Specify the JDK version you need
+        jdk 'Java 11' // Replace with your JDK version name configured in Jenkins
     }
+
     environment {
-        // Set environment variables if required
-        BUILD_TOOL = 'gradle' // Example tool
+        // Add any environment variables if required
+        GRADLE_USER_HOME = '.gradle'
     }
+
     stages {
         stage('Checkout') {
             steps {
-                echo 'Checking out source code...'
+                echo 'Checking out the source code...'
                 checkout scm
             }
         }
+
         stage('Build') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh './build.sh' // Replace with your Linux build command/script
-                    } else {
-                        bat 'build.bat' // Replace with your Windows build command/script
-                    }
-                }
+                echo 'Building the application...'
+                bat './gradlew.bat clean build'
             }
         }
+
         stage('Test') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh './run-tests.sh' // Replace with your Linux test command/script
-                    } else {
-                        bat 'run-tests.bat' // Replace with your Windows test command/script
-                    }
-                }
+                echo 'Running tests...'
+                bat './gradlew.bat test'
             }
         }
+
         stage('Deploy') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh './deploy.sh' // Replace with your Linux deploy command/script
-                    } else {
-                        bat 'deploy.bat' // Replace with your Windows deploy command/script
-                    }
-                }
+                echo 'Deploying application...'
+                // Add deployment steps here (e.g., copy files, run scripts, etc.)
             }
         }
     }
+
     post {
-        always {
-            echo 'Pipeline finished.'
-        }
         success {
-            echo 'Build and tests were successful!'
+            echo 'Pipeline completed successfully!'
         }
+
         failure {
-            echo 'There were failures. Please check the logs.'
+            echo 'Pipeline failed. Check the logs for details.'
+        }
+
+        always {
+            echo 'Cleaning up...'
+            cleanWs() // Optional: Cleans up the workspace
         }
     }
 }
