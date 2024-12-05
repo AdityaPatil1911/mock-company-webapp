@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         // Specify the JDK version you need
-        jdk 'Java 11' // Replace with your JDK version name configured in Jenkins
+        jdk 'jdk 21' // Replace with your JDK version name configured in Jenkins
     }
 
     environment {
